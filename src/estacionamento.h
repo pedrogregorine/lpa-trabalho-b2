@@ -74,4 +74,18 @@ int ler_inteiro(int *valor);
 void menu_cadastrar(Frota *f, int mapa[FILEIRAS][COLUNAS]);
 void menu_consultar(const Frota *f);
 
+typedef enum{
+    ATU_OK,
+    ATU_ID_INVALIDO,
+    ATU_NAO_ENCONTRADO,
+    ATU_DESC_INVALIDA,
+    ATU_CATEGORIA_INVALIDA,
+    ATU_NADA_A_ALTERAR
+} StatusAtualizacao;
+
+StatusAtualizacao atualizar_veiculo(Frota *f, const char *id_entrada,
+                                    const char *nova_desc, int nova_cat);
+
+void menu_atualizar(Frota *f);
+
 #endif

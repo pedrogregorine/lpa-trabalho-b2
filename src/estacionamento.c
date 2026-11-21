@@ -332,3 +332,108 @@ void menu_consultar(const Frota *f){
     printf("Categoria:     %s\n", nome_categoria(v->categoria));
     printf("Posicao:       F%d/C%d\n", v->fileira, v->coluna);
 }
+
+StatusAtualizacao atualizar_veiculo(Frota *f, const char *id_entrada,
+                                    const char *nova_desc, int nova_cat){
+
+    char id[TAM_ID + 1];
+
+    if(!normalizar_id(id_entrada, id)){
+        return ATU_ID_INVALIDO;
+    }
+    int pos = buscar_veiculo(f, id);
+    if(pos < 0){
+        return ATU_NAO_ENCONTRADO;
+    }
+    if(nova_desc != NULL && !descricao_valida(nova_desc)){
+        return ATU_DESC_INVALIDA;
+    }
+    if(nova_cat != 0 && nova_cat != CATEGORIA_CARRO && nova_cat != CATEGORIA_MOTO){
+        return ATU_CATEGORIA_INVALIDA;
+    }
+    if(nova_desc == NULL && nova_cat == 0){
+        return ATU_NADA_A_ALTERAR;
+    }
+
+    Veiculo *v = &f->dados[pos];
+    if(nova_desc != NULL){
+        strcpy(v->descricao, nova_desc);
+    }
+    if(nova_cat != 0){
+        v->categoria = nova_cat;
+    }
+    return ATU_OK;
+}
+
+void menu_atualizar(Frota *f){
+
+    char entrada[TAM_ID + 2];
+    char id[TAM_ID + 1];
+    char desc[MAX_DESCRICAO + 2];
+    char linha[64];
+    char *fim;
+    const char *nova_desc = NULL;
+    int nova_cat = 0;
+
+    printf("Identificador: ");
+    if(ler_linha(entrada, sizeof entrada) != 1 || !normalizar_id(entrada, id)){
+        printf("Identificador invalido; veiculo nao localizado.\n");
+        return;
+    }
+
+    int pos = buscar_veiculo(f, id);
+    if(pos < 0){
+        printf("Veiculo %s nao localizado.\n", id);
+        return;
+    }
+
+    printf("Descricao atual: %s\n", f->dados[pos].descricao);
+    printf("Categoria atual: %s\n", nome_categoria(f->dados[pos].categoria));
+
+    printf("Nova descricao (Enter para manter): ");
+    if(ler_linha(desc, sizeof desc) != 1){
+        printf("Entrada invalida ou longa demais. Atualizacao cancelada.\n");
+        return;
+    }
+    if(desc[0] != '\0'){
+        nova_desc = desc;
+    }
+
+    printf("Nova categoria (1 = carro, 2 = moto, Enter para manter): ");
+    if(ler_linha(linha, sizeof linha) != 1){
+        printf("Entrada invalida. Atualizacao cancelada.\n");
+        return;
+    }
+    if(linha[0] != '\0'){
+        long n = strtol(linha, &fim, 10);
+        while(*fim == ' ' || *fim == '\t'){
+            fim++;
+        }
+        if(fim == linha || *fim != '\0' || n < 1 || n > 2){
+            printf("Categoria invalida: use 1 (carro) ou 2 (moto). Atualizacao cancelada.\n");
+            return;
+        }
+        nova_cat = (int)n;
+    }
+
+    switch(atualizar_veiculo(f, id, nova_desc, nova_cat)){
+        case ATU_OK:
+            printf("Veiculo %s atualizado.\n", id);
+            printf("Descricao: %s\n", f->dados[pos].descricao);
+            printf("Categoria: %s\n", nome_categoria(f->dados[pos].categoria));
+            break;
+        case ATU_NADA_A_ALTERAR:
+            printf("Nada foi alterado.\n");
+            break;
+        case ATU_DESC_INVALIDA:
+            printf("Descricao invalida: deve ter de 1 a %d caracteres.\n", MAX_DESCRICAO);
+            break;
+        case ATU_CATEGORIA_INVALIDA:
+            printf("Categoria invalida: use 1 (carro) ou 2 (moto).\n");
+            break;
+        case ATU_ID_INVALIDO:
+        case ATU_NAO_ENCONTRADO:
+            printf("Veiculo nao localizado.\n");
+            break;
+    }
+}
