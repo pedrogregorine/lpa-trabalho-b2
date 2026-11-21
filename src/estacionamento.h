@@ -113,4 +113,10 @@ StatusRemocao remover_veiculo(Frota *f, int mapa[FILEIRAS][COLUNAS],
 
 void menu_remover(Frota *f, int mapa[FILEIRAS][COLUNAS]);
 
+int contar_categoria(const Frota *f, int categoria);
+
+void listar_veiculos(const Frota *f);
+
+void exibir_relatorio(const Frota *f, int mapa[FILEIRAS][COLUNAS]);
+
 #endif

@@ -44,14 +44,13 @@ int main(void){
                 menu_remover(&frota, mapa);
                 break;
             case 6:
-                printf("Opcao %d ainda nao implementada.\n", opcao);
+                listar_veiculos(&frota);
                 break;
             case 7:
                 exibir_mapa(mapa);
                 break;
             case 8:
-                printf("Vagas ocupadas: %d de %d\n",
-                       contar_ocupadas(mapa), TOTAL_VAGAS);
+                exibir_relatorio(&frota, mapa);
                 break;
             case 0:
                 printf("Encerrando.\n");
