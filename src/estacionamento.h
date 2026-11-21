@@ -88,4 +88,18 @@ StatusAtualizacao atualizar_veiculo(Frota *f, const char *id_entrada,
 
 void menu_atualizar(Frota *f);
 
+typedef enum{
+    MOV_OK,
+    MOV_ID_INVALIDO,
+    MOV_NAO_ENCONTRADO,
+    MOV_POSICAO_INVALIDA,
+    MOV_MESMA_VAGA,
+    MOV_VAGA_OCUPADA
+} StatusMovimento;
+
+StatusMovimento mover_veiculo(Frota *f, int mapa[FILEIRAS][COLUNAS],
+                              const char *id_entrada, int fileira, int coluna);
+
+void menu_mover(Frota *f, int mapa[FILEIRAS][COLUNAS]);
+
 #endif
