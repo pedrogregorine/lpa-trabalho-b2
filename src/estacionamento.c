@@ -437,3 +437,91 @@ void menu_atualizar(Frota *f){
             break;
     }
 }
+
+StatusMovimento mover_veiculo(Frota *f, int mapa[FILEIRAS][COLUNAS],
+                              const char *id_entrada, int fileira, int coluna){
+
+    char id[TAM_ID + 1];
+
+    if(!normalizar_id(id_entrada, id)){
+        return MOV_ID_INVALIDO;
+    }
+    int pos = buscar_veiculo(f, id);
+    if(pos < 0){
+        return MOV_NAO_ENCONTRADO;
+    }
+    if(!posicao_valida(fileira, coluna)){
+        return MOV_POSICAO_INVALIDA;
+    }
+
+    Veiculo *v = &f->dados[pos];
+    if(v->fileira == fileira && v->coluna == coluna){
+        return MOV_MESMA_VAGA;
+    }
+    if(mapa[fileira - 1][coluna - 1] == VAGA_OCUPADA){
+        return MOV_VAGA_OCUPADA;
+    }
+
+    mapa[v->fileira - 1][v->coluna - 1] = VAGA_LIVRE;
+    mapa[fileira - 1][coluna - 1] = VAGA_OCUPADA;
+    v->fileira = fileira;
+    v->coluna = coluna;
+    return MOV_OK;
+}
+
+void menu_mover(Frota *f, int mapa[FILEIRAS][COLUNAS]){
+
+    char entrada[TAM_ID + 2];
+    char id[TAM_ID + 1];
+    int fileira, coluna;
+
+    printf("Identificador: ");
+    if(ler_linha(entrada, sizeof entrada) != 1 || !normalizar_id(entrada, id)){
+        printf("Identificador invalido; veiculo nao localizado.\n");
+        return;
+    }
+
+    int pos = buscar_veiculo(f, id);
+    if(pos < 0){
+        printf("Veiculo %s nao localizado.\n", id);
+        return;
+    }
+
+    int origem_f = f->dados[pos].fileira;
+    int origem_c = f->dados[pos].coluna;
+    printf("Posicao atual: F%d/C%d\n", origem_f, origem_c);
+
+    printf("Nova fileira (1 a %d): ", FILEIRAS);
+    if(!ler_inteiro(&fileira)){
+        printf("Valor numerico invalido. Movimentacao cancelada.\n");
+        return;
+    }
+    printf("Nova coluna (1 a %d): ", COLUNAS);
+    if(!ler_inteiro(&coluna)){
+        printf("Valor numerico invalido. Movimentacao cancelada.\n");
+        return;
+    }
+
+    switch(mover_veiculo(f, mapa, id, fileira, coluna)){
+        case MOV_OK:
+            printf("Veiculo %s movido de F%d/C%d para F%d/C%d.\n",
+                   id, origem_f, origem_c, fileira, coluna);
+            break;
+        case MOV_MESMA_VAGA:
+            printf("O veiculo ja esta na vaga F%d/C%d. Nada foi alterado.\n",
+                   fileira, coluna);
+            break;
+        case MOV_VAGA_OCUPADA:
+            printf("A vaga F%d/C%d ja esta ocupada. Movimentacao recusada.\n",
+                   fileira, coluna);
+            break;
+        case MOV_POSICAO_INVALIDA:
+            printf("Posicao invalida: fileira de 1 a %d e coluna de 1 a %d.\n",
+                   FILEIRAS, COLUNAS);
+            break;
+        case MOV_ID_INVALIDO:
+        case MOV_NAO_ENCONTRADO:
+            printf("Veiculo nao localizado.\n");
+            break;
+    }
+}
