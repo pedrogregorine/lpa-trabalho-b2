@@ -81,3 +81,41 @@ int ler_inteiro(int *valor){
     *valor = (int)n;
     return 1;
 }
+
+int frota_iniciar(Frota *f){
+
+    f->dados = malloc(CAPACIDADE_INICIAL * sizeof(Veiculo));
+    if(f->dados == NULL){
+        f->usados = 0;
+        f->capacidade = 0;
+        return 0;
+    }
+    f->usados = 0;
+    f->capacidade = CAPACIDADE_INICIAL;
+    return 1;
+}
+
+int frota_garantir_espaco(Frota *f){
+
+    if(f->usados < f->capacidade){
+        return 1;
+    }
+
+    int nova_cap = f->capacidade * 2;
+
+    Veiculo *novo = realloc(f->dados, nova_cap * sizeof(Veiculo));
+    if(novo == NULL){
+        return 0;
+    }
+    f->dados = novo;
+    f->capacidade = nova_cap;
+    return 1;
+}
+
+void frota_liberar(Frota *f){
+
+    free(f->dados);
+    f->dados = NULL;
+    f->usados = 0;
+    f->capacidade = 0;
+}
