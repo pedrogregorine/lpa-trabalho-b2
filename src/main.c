@@ -34,7 +34,10 @@ int main(void){
             case 2:
                 menu_consultar(&frota);
                 break;
-            case 3: case 4: case 5: case 6:
+            case 3:
+                menu_atualizar(&frota);
+                break;
+            case 4: case 5: case 6:
                 printf("Opcao %d ainda nao implementada.\n", opcao);
                 break;
             case 7:
