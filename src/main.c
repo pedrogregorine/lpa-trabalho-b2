@@ -4,9 +4,14 @@
 int main(void){
 
     int mapa[FILEIRAS][COLUNAS];
+    Frota frota;
     int opcao;
 
     inicializar_mapa(mapa);
+    if(!frota_iniciar(&frota)){
+        printf("Erro: memoria insuficiente para iniciar.\n");
+        return 1;
+    }
 
     do{
         exibir_menu();
@@ -41,5 +46,6 @@ int main(void){
         }
     }while(opcao != 0);
 
+    frota_liberar(&frota);
     return 0;
 }
