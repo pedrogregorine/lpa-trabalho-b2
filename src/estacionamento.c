@@ -572,3 +572,44 @@ void menu_remover(Frota *f, int mapa[FILEIRAS][COLUNAS]){
         printf("Veiculo %s removido. Vaga F%d/C%d liberada.\n", id, fileira, coluna);
     }
 }
+
+int contar_categoria(const Frota *f, int categoria){
+
+    int total = 0;
+
+    for(int i = 0; i < f->usados; i++){
+        if(f->dados[i].categoria == categoria){
+            total++;
+        }
+    }
+    return total;
+}
+
+void listar_veiculos(const Frota *f){
+
+    if(f->usados == 0){
+        printf("Nenhum veiculo cadastrado.\n");
+        return;
+    }
+
+    printf("\nVeiculos cadastrados (%d):\n", f->usados);
+    for(int i = 0; i < f->usados; i++){
+        const Veiculo *v = &f->dados[i];
+        printf("%s | %s | %s | F%d/C%d\n", v->id, v->descricao,
+               nome_categoria(v->categoria), v->fileira, v->coluna);
+    }
+}
+
+void exibir_relatorio(const Frota *f, int mapa[FILEIRAS][COLUNAS]){
+
+    int ocupadas = contar_ocupadas(mapa);
+    double percentual = ocupadas * 100.0 / TOTAL_VAGAS;
+
+    printf("\n=== Relatorio de ocupacao ===\n");
+    printf("Total de vagas:  %d\n", TOTAL_VAGAS);
+    printf("Vagas ocupadas:  %d\n", ocupadas);
+    printf("Vagas livres:    %d\n", TOTAL_VAGAS - ocupadas);
+    printf("Ocupacao:        %.2f%%\n", percentual);
+    printf("Carros:          %d\n", contar_categoria(f, CATEGORIA_CARRO));
+    printf("Motos:           %d\n", contar_categoria(f, CATEGORIA_MOTO));
+}
