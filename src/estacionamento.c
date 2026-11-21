@@ -525,3 +525,50 @@ void menu_mover(Frota *f, int mapa[FILEIRAS][COLUNAS]){
             break;
     }
 }
+
+StatusRemocao remover_veiculo(Frota *f, int mapa[FILEIRAS][COLUNAS],
+                              const char *id_entrada){
+
+    char id[TAM_ID + 1];
+
+    if(!normalizar_id(id_entrada, id)){
+        return REM_ID_INVALIDO;
+    }
+    int pos = buscar_veiculo(f, id);
+    if(pos < 0){
+        return REM_NAO_ENCONTRADO;
+    }
+
+    mapa[f->dados[pos].fileira - 1][f->dados[pos].coluna - 1] = VAGA_LIVRE;
+
+    for(int i = pos; i < f->usados - 1; i++){
+        f->dados[i] = f->dados[i + 1];
+    }
+    f->usados--;
+    return REM_OK;
+}
+
+void menu_remover(Frota *f, int mapa[FILEIRAS][COLUNAS]){
+
+    char entrada[TAM_ID + 2];
+    char id[TAM_ID + 1];
+
+    printf("Identificador: ");
+    if(ler_linha(entrada, sizeof entrada) != 1 || !normalizar_id(entrada, id)){
+        printf("Identificador invalido; veiculo nao localizado.\n");
+        return;
+    }
+
+    int pos = buscar_veiculo(f, id);
+    if(pos < 0){
+        printf("Veiculo %s nao localizado.\n", id);
+        return;
+    }
+
+    int fileira = f->dados[pos].fileira;
+    int coluna = f->dados[pos].coluna;
+
+    if(remover_veiculo(f, mapa, id) == REM_OK){
+        printf("Veiculo %s removido. Vaga F%d/C%d liberada.\n", id, fileira, coluna);
+    }
+}

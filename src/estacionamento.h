@@ -102,4 +102,15 @@ StatusMovimento mover_veiculo(Frota *f, int mapa[FILEIRAS][COLUNAS],
 
 void menu_mover(Frota *f, int mapa[FILEIRAS][COLUNAS]);
 
+typedef enum{
+    REM_OK,
+    REM_ID_INVALIDO,
+    REM_NAO_ENCONTRADO
+} StatusRemocao;
+
+StatusRemocao remover_veiculo(Frota *f, int mapa[FILEIRAS][COLUNAS],
+                              const char *id_entrada);
+
+void menu_remover(Frota *f, int mapa[FILEIRAS][COLUNAS]);
+
 #endif

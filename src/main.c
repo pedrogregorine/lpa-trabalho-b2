@@ -40,7 +40,10 @@ int main(void){
             case 4:
                 menu_mover(&frota, mapa);
                 break;
-            case 5: case 6:
+            case 5:
+                menu_remover(&frota, mapa);
+                break;
+            case 6:
                 printf("Opcao %d ainda nao implementada.\n", opcao);
                 break;
             case 7:
