@@ -28,7 +28,13 @@ int main(void){
         }
 
         switch(opcao){
-            case 1: case 2: case 3: case 4: case 5: case 6:
+            case 1:
+                menu_cadastrar(&frota, mapa);
+                break;
+            case 2:
+                menu_consultar(&frota);
+                break;
+            case 3: case 4: case 5: case 6:
                 printf("Opcao %d ainda nao implementada.\n", opcao);
                 break;
             case 7:
